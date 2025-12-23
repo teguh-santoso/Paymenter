@@ -12,6 +12,7 @@ use App\Models\DebugLog;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -35,6 +36,14 @@ return Application::configure(basePath: dirname(__DIR__))
             ImpersonateMiddleware::class,
             SetLocale::class,
         ]);
+        $middleware->trustProxies(
+            at: '*',
+            headers:
+                Request::HEADER_X_FORWARDED_FOR |
+                Request::HEADER_X_FORWARDED_HOST |
+                Request::HEADER_X_FORWARDED_PORT |
+                Request::HEADER_X_FORWARDED_PROTO
+        );
     })
     ->withEvents(discover: [
         __DIR__ . '/../app/Extensions',
